@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="myProcess1" name="我的流程1" isExecutable="true">
+    <documentation>串行流程</documentation>
+    <startEvent id="testStart" name="测试开始" activiti:formKey="jasframework/samples/salary/salarystatistics.htm?para="></startEvent>
+    <userTask id="usertask1" name="测试节点111" activiti:candidateUsers="leader" activiti:candidateGroups="hruser" activiti:dueDate="PT30M" activiti:formKey="jasframework/samples/salary/xxx.htm?para=">
+      <extensionElements>
+        <activiti:taskListener event="create" class="cn.cloudlink.core.workflow.listener.DefaultTaskSendTodoMailListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="testStart" targetRef="usertask1"></sequenceFlow>
+    <userTask id="usertask2" name="测试节点2" activiti:candidateUsers="${assignee}">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="cn.cloudlink.core.workflow.listener.DefaultMultiInstanceCompleteListener"></activiti:taskListener>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="assigneeList" activiti:elementVariable="assignee">
+        <completionCondition>${nrOfCompletedInstances/nrOfInstances &gt;= 1}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <sequenceFlow id="flow2" name="提交" sourceRef="usertask1" targetRef="usertask2">
+      <extensionElements>
+        <activiti:executionListener event="take" class="cn.cloudlink.core.workflow.listener.DefaultRemoteExecutionListener"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=="人力审批"}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask3" name="User Task"></userTask>
+    <sequenceFlow id="flow3" sourceRef="usertask2" targetRef="usertask3"></sequenceFlow>
+    <parallelGateway id="XXparallel_start" name="测试会签开始"></parallelGateway>
+    <sequenceFlow id="flow4" sourceRef="usertask3" targetRef="XXparallel_start"></sequenceFlow>
+    <userTask id="usertask4" name="User Task"></userTask>
+    <sequenceFlow id="flow5" sourceRef="XXparallel_start" targetRef="usertask4"></sequenceFlow>
+    <userTask id="usertask5" name="User Task"></userTask>
+    <sequenceFlow id="flow6" sourceRef="XXparallel_start" targetRef="usertask5"></sequenceFlow>
+    <userTask id="usertask6" name="User Task"></userTask>
+    <sequenceFlow id="flow7" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
+    <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
+    <sequenceFlow id="flow8" sourceRef="usertask5" targetRef="parallelgateway1"></sequenceFlow>
+    <sequenceFlow id="flow9" sourceRef="usertask6" targetRef="parallelgateway1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_myProcess1">
+    <bpmndi:BPMNPlane bpmnElement="myProcess1" id="BPMNPlane_myProcess1">
+      <bpmndi:BPMNShape bpmnElement="testStart" id="BPMNShape_testStart">
+        <omgdc:Bounds height="35.0" width="35.0" x="30.0" y="226.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="110.0" y="216.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="260.0" y="216.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask3" id="BPMNShape_usertask3">
+        <omgdc:Bounds height="55.0" width="105.0" x="410.0" y="216.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="XXparallel_start" id="BPMNShape_XXparallel_start">
+        <omgdc:Bounds height="40.0" width="40.0" x="560.0" y="224.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask4" id="BPMNShape_usertask4">
+        <omgdc:Bounds height="55.0" width="105.0" x="630.0" y="350.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask5" id="BPMNShape_usertask5">
+        <omgdc:Bounds height="55.0" width="105.0" x="420.0" y="350.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask6" id="BPMNShape_usertask6">
+        <omgdc:Bounds height="55.0" width="105.0" x="630.0" y="460.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway1" id="BPMNShape_parallelgateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="452.0" y="467.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="65.0" y="243.0"></omgdi:waypoint>
+        <omgdi:waypoint x="110.0" y="243.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="215.0" y="243.0"></omgdi:waypoint>
+        <omgdi:waypoint x="260.0" y="243.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="215.0" y="243.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="365.0" y="243.0"></omgdi:waypoint>
+        <omgdi:waypoint x="410.0" y="243.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="515.0" y="243.0"></omgdi:waypoint>
+        <omgdi:waypoint x="560.0" y="244.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="580.0" y="264.0"></omgdi:waypoint>
+        <omgdi:waypoint x="682.0" y="350.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="580.0" y="264.0"></omgdi:waypoint>
+        <omgdi:waypoint x="472.0" y="350.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="682.0" y="405.0"></omgdi:waypoint>
+        <omgdi:waypoint x="682.0" y="460.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="472.0" y="405.0"></omgdi:waypoint>
+        <omgdi:waypoint x="472.0" y="467.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="630.0" y="487.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="487.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
